@@ -5,7 +5,12 @@ import { TagService } from './tag.service';
 export class TagController {
   constructor(private readonly tagService: TagService) {}
   @Get()
-  findAll() {
-    return this.tagService.findAll();
+  async findAll(): Promise<{ tags: string[] }> {
+    const tags = await this.tagService.findAll();
+    console.log(tags);
+
+    return {
+      tags: tags.map((tag) => tag.name),
+    };
   }
 }

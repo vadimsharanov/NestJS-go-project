@@ -15,7 +15,6 @@ export class AuthMiddleware implements NestMiddleware {
       return;
     }
     const token = req.headers.authorization.split(" ")[1];
-    console.log("token", token);
 
     try {
       const decode = verify(token, JWT_SECRET);
@@ -24,7 +23,6 @@ export class AuthMiddleware implements NestMiddleware {
       next();
     } catch (err) {
       req.user = null;
-      console.log(err);
       next();
     }
   }

@@ -6,7 +6,7 @@ import { UserEntity } from "./entity/user.entity";
 import { sign } from "jsonwebtoken";
 import { JWT_SECRET } from "src/config";
 import { UserResponseInterface } from "./types/userResponseInterface";
-import { LoginUserDto } from "./dto/loginUserDto";
+import { LoginUserDto } from "./dto/loginUser.dto";
 import { compare } from "bcrypt";
 
 @Injectable()

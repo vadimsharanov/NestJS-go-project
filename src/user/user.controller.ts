@@ -18,6 +18,7 @@ import { Request } from "express";
 import { ExpressRequestInterface } from "src/types/expressRequestInterface";
 import { User } from "./decorators/user.decorator";
 import { AuthGuard } from "./guard/auth.guard";
+import { UpdateUserDto } from "./dto/updateUser.dto";
 
 @Controller()
 export class UserController {
@@ -44,9 +45,11 @@ export class UserController {
 
   @Put("user")
   @UseGuards(AuthGuard)
-  async updateUser(@User() user: UserEntity): Promise<UserResponseInterface> {
-    console.log(user);
-
+  async updateCurrentUser(
+    @User("id") currentUserId: number,
+    @Body("user") updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseInterface> {
+    const user = await this.userService.updateUser(currentUserId, updateUserDto);
     return this.userService.buildUserResponse(user);
   }
 }

@@ -1,9 +1,6 @@
-import { IsNotEmpty } from "class-validator";
-
 export class UpdateUserDto {
-  @IsNotEmpty()
-  bio: string;
-
-  @IsNotEmpty()
-  image: string;
+  readonly username: string;
+  readonly email: string;
+  readonly bio: string;
+  readonly image: string;
 }

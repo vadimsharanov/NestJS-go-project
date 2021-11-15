@@ -6,6 +6,7 @@ import { UserResponseInterface } from "./types/userResponseInterface";
 import { UserService } from "./user.service";
 import { Request } from "express";
 import { ExpressRequestInterface } from "src/types/expressRequestInterface";
+import { User } from "./decorators/user.decorator";
 
 @Controller()
 export class UserController {
@@ -25,9 +26,10 @@ export class UserController {
   }
 
   @Get("user")
-  async currentUser(@Req() request: ExpressRequestInterface): Promise<UserResponseInterface> {
-    console.log(request.user);
+  async currentUser(@User() user: UserEntity, @User('id') currentUserId:number): Promise<UserResponseInterface> {
+    console.log(currentUserId);
+    
 
-    return "current" as any;
+    return this.userService.buildUserResponse(user);
   }
 }

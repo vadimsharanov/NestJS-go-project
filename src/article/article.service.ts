@@ -17,10 +17,7 @@ export class ArticleService {
 			article.tagList = [];
 		}
 		article.slug = this.getSlug(createArticleDto.title);
-		console.log(article.slug);
-
 		article.author = currentUser;
-
 		return await this.articleRepository.save(article);
 	}
 
@@ -37,6 +34,23 @@ export class ArticleService {
 			throw new HttpException("You are not an author", HttpStatus.FORBIDDEN);
 		}
 		return await this.articleRepository.delete({ slug });
+	}
+
+	async updateArticle(currentUserId: number, createArticleDto: CreateArticleDto, slug: string): Promise<ArticleEntity> {
+		const article = await this.findBySlug(slug);
+		if (!article) {
+			throw new HttpException("Article does not exist", HttpStatus.NOT_FOUND);
+		}
+
+		if (article.author.id !== currentUserId) {
+			throw new HttpException("You are not an author", HttpStatus.FORBIDDEN);
+		}
+		Object.assign(article, createArticleDto);
+		if (!article.tagList) {
+			article.tagList = [];
+		}
+
+		return await this.articleRepository.save(article);
 	}
 
 	buildArticleResponse(article: ArticleEntity): ArticleResponseInterface {

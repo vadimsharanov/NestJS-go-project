@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { User } from "src/user/decorators/user.decorator";
 import { UserEntity } from "src/user/entity/user.entity";
 import { AuthGuard } from "src/user/guard/auth.guard";
@@ -30,4 +30,16 @@ export class ArticleController {
 	async deleteSingleArticle(@User("id") currentUserId: number, @Param("slug") slug: string) {
 		return await this.articleService.deleteArticle(slug, currentUserId);
 	}
+
+	@Put(":slug")
+	async updateSingleArticle(
+		@User() currentUserId: number,
+		@Body("article") createArticleDto: CreateArticleDto,
+		@Param("slug") slug: string,
+	): Promise<ArticleResponseInterface> {
+		const article = await this.articleService.updateArticle(currentUserId, createArticleDto, slug);
+		return this.articleService.buildArticleResponse(article);
+	}
 }
+// new method, controller, like createArticle, can use createarticledto, or create new
+// service should check, then repository save to save the post

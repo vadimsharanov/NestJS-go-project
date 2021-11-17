@@ -1,12 +1,5 @@
 import { UserEntity } from "src/user/entity/user.entity";
-import {
-	BeforeUpdate,
-	Column,
-	Entity,
-	ManyToMany,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-} from "typeorm";
+import { BeforeUpdate, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "articles" })
 export class ArticleEntity {
@@ -42,6 +35,6 @@ export class ArticleEntity {
 		this.updatedAt = new Date();
 	}
 
-	@ManyToOne(() => UserEntity, (user) => user.articles)
+	@ManyToOne(() => UserEntity, (user) => user.articles, { eager: true })
 	author: UserEntity;
 }

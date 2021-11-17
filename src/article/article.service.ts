@@ -1,14 +1,49 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "src/user/entity/user.entity";
-import { DeleteResult, Repository } from "typeorm";
+import { DeleteResult, getRepository, Repository } from "typeorm";
 import { ArticleEntity } from "./article.entity";
 import { CreateArticleDto } from "./dto/createArticle.dto";
 import { ArticleResponseInterface } from "./types/article.response.interface";
 import slugify from "slugify";
+import { AllArticlesResponseInterface } from "./types/allArticlesResponseInterface";
 @Injectable()
 export class ArticleService {
-	constructor(@InjectRepository(ArticleEntity) private readonly articleRepository: Repository<ArticleEntity>) {}
+	constructor(
+		@InjectRepository(ArticleEntity) private readonly articleRepository: Repository<ArticleEntity>,
+		@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
+	) {}
+
+	async findAll(currentUserId: number, query: any): Promise<AllArticlesResponseInterface> {
+		const queryBuilder = getRepository(ArticleEntity)
+			.createQueryBuilder("articles")
+			.leftJoinAndSelect("articles.author", "author");
+		queryBuilder.orderBy("articles.createdAt", "ASC");
+
+		const articlesCount = await queryBuilder.getCount();
+
+		if (query.author) {
+			const author = await this.userRepository.findOne({
+				username: query.author,
+			});
+			queryBuilder.andWhere("articles.authorId = :id", {
+				id: author.id,
+			});
+		}
+
+		if (query.limit) {
+			queryBuilder.limit(query.limit);
+		}
+
+		if (query.offset) {
+			queryBuilder.offset(query.offset);
+		}
+
+		const articles = await queryBuilder.getMany();
+
+		return { articles, articlesCount };
+	}
+
 	async createArticle(currentUser: UserEntity, createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
 		const article = new ArticleEntity();
 		Object.assign(article, createArticleDto);

@@ -1,15 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { User } from "src/user/decorators/user.decorator";
 import { UserEntity } from "src/user/entity/user.entity";
 import { AuthGuard } from "src/user/guard/auth.guard";
 import { ArticleEntity } from "./article.entity";
 import { ArticleService } from "./article.service";
 import { CreateArticleDto } from "./dto/createArticle.dto";
+import { AllArticlesResponseInterface } from "./types/allArticlesResponseInterface";
 import { ArticleResponseInterface } from "./types/article.response.interface";
 
 @Controller("articles")
 export class ArticleController {
 	constructor(private readonly articleService: ArticleService) {}
+
+	@Get()
+	async findAll(@User("id") currentUserId: number, @Query() query: any): Promise<AllArticlesResponseInterface> {
+		return await this.articleService.findAll(currentUserId, query);
+	}
+
 	@Post()
 	@UseGuards(AuthGuard)
 	async create(
@@ -41,5 +48,3 @@ export class ArticleController {
 		return this.articleService.buildArticleResponse(article);
 	}
 }
-// new method, controller, like createArticle, can use createarticledto, or create new
-// service should check, then repository save to save the post

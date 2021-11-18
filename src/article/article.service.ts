@@ -40,30 +40,33 @@ export class ArticleService {
 				},
 				{ relations: ["favorites"] },
 			);
-			// console.log(author);
-
+			if (!author) {
+				console.log("byl");
+				queryBuilder.andWhere("1=0");
+				const articles = await queryBuilder.getMany();
+				const articlesCount = await queryBuilder.getCount();
+				return { articles, articlesCount };
+			}
 			const ids = author.favorites.map((el) => el.id);
-			console.log(ids);
-			let idd = [1, 2, 3, 4, 5, 6];
-
 			if (ids.length > 0) {
 				console.log("tut");
-				const atsakymas = await queryBuilder.andWhere("articles.authorId in (:...ids)", { ids: idd }).getMany();
+				queryBuilder.andWhere("articles.id in (:...ids)", { ids });
+				const articles = await queryBuilder.getMany();
 				const articlesCount = await queryBuilder.getCount();
-				return atsakymas as any;
+				return { articles, articlesCount };
 			} else {
 				queryBuilder.andWhere("1=0");
 			}
 		}
+		if (query.limit) {
+			queryBuilder.limit(query.limit);
+		}
+
+		if (query.offset) {
+			queryBuilder.offset(query.offset);
+		}
+
 		const articlesCount = await queryBuilder.getCount();
-		// if (query.limit) {
-		// 	queryBuilder.limit(query.limit);
-		// }
-
-		// if (query.offset) {
-		// 	queryBuilder.offset(query.offset);
-		// }
-
 		const articles = await queryBuilder.getMany();
 
 		return { articles, articlesCount };

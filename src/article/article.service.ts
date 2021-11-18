@@ -19,20 +19,20 @@ export class ArticleService {
 			.createQueryBuilder("articles")
 			.leftJoinAndSelect("articles.author", "author");
 
-		// if (query.tag) {
-		// 	queryBuilder.andWhere("articles.tagList like :tag", {
-		// 		tag: `%${query.tag}%`,
-		// 	});
-		// }
+		if (query.tag) {
+			queryBuilder.andWhere("articles.tagList like :tag", {
+				tag: `%${query.tag}%`,
+			});
+		}
 
-		// if (query.author) {
-		// 	const author = await this.userRepository.findOne({
-		// 		username: query.author,
-		// 	});
-		// 	queryBuilder.andWhere("articles.authorId = :id", {
-		// 		id: author.id,
-		// 	});
-		// }
+		if (query.author) {
+			const author = await this.userRepository.findOne({
+				username: query.author,
+			});
+			queryBuilder.andWhere("articles.authorId = :id", {
+				id: author.id,
+			});
+		}
 		if (query.favorited) {
 			const author = await this.userRepository.findOne(
 				{

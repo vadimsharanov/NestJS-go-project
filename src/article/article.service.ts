@@ -73,6 +73,7 @@ export class ArticleService {
 			});
 			favoriteIds = currentUser.favorites.map((favorite) => favorite.id);
 		}
+		queryBuilder.orderBy("articles.createdAt", "DESC");
 		const articlesCount = await queryBuilder.getCount();
 		const articles = await queryBuilder.getMany();
 		const articlesWithFavorites = articles.map((article) => {

@@ -116,10 +116,10 @@ export class ArticleService {
 
 	async updateArticle(currentUserId: number, createArticleDto: CreateArticleDto, slug: string): Promise<ArticleEntity> {
 		const article = await this.findBySlug(slug);
+
 		if (!article) {
 			throw new HttpException("Article does not exist", HttpStatus.NOT_FOUND);
 		}
-
 		if (article.author.id !== currentUserId) {
 			throw new HttpException("You are not an author", HttpStatus.FORBIDDEN);
 		}

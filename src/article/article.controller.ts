@@ -40,7 +40,7 @@ export class ArticleController {
 
 	@Put(":slug")
 	async updateSingleArticle(
-		@User() currentUserId: number,
+		@User("id") currentUserId: number,
 		@Body("article") createArticleDto: CreateArticleDto,
 		@Param("slug") slug: string,
 	): Promise<ArticleResponseInterface> {

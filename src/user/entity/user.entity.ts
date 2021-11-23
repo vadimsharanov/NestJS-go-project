@@ -12,12 +12,11 @@ export class UserEntity {
 	@Column()
 	username: string;
 
-	@Column({ default: "fdsfsdfsdfsdfsdfsdfsdfsdsdfdsfsfdsfdsf" })
+	@Column({ default: "" })
 	bio: string;
 
 	@Column({ default: "" })
-	image: string =
-		"https://lh3.googleusercontent.com/proxy/AGxe1nsJs24WYUgCDGglnJzaADeHC0VaA_YxJQW76UUmAzsP_l0Y5PL4y6pVcEAa2ihchYtwlsRoiji9lRzgMxQo4lJ1Y5DvSP1vt4loHPyDuVX-y10";
+	image: string;
 
 	@Column({ select: false })
 	password: string;

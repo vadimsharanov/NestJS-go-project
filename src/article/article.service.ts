@@ -41,7 +41,6 @@ export class ArticleService {
 				{ relations: ["favorites"] },
 			);
 			if (!author) {
-				console.log("byl");
 				queryBuilder.andWhere("1=0");
 				const articles = await queryBuilder.getMany();
 				const articlesCount = await queryBuilder.getCount();
@@ -49,7 +48,6 @@ export class ArticleService {
 			}
 			const ids = author.favorites.map((el) => el.id);
 			if (ids.length > 0) {
-				console.log("tut");
 				queryBuilder.andWhere("articles.id in (:...ids)", { ids });
 				const articles = await queryBuilder.getMany();
 				const articlesCount = await queryBuilder.getCount();
@@ -79,10 +77,7 @@ export class ArticleService {
 		const articles = await queryBuilder.getMany();
 		const articlesWithFavorites = articles.map((article) => {
 			const favorited = favoriteIds.includes(article.id);
-			Object.assign(article, favorited); // or
-			// return {..article, favorited}
-
-			return article;
+			return { ...article, favorited };
 		});
 		return { articles: articlesWithFavorites, articlesCount };
 	}

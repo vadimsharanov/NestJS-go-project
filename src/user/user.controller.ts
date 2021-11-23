@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { LoginUserDto } from "./dto/loginUser.dto";
 import { UserEntity } from "./entity/user.entity";
@@ -41,7 +41,6 @@ export class UserController {
 		@Body("user") updateUserDto: UpdateUserDto,
 	): Promise<UserResponseInterface> {
 		const user = await this.userService.updateUser(currentUserId, updateUserDto);
-
 		return this.userService.buildUserResponse(user);
 	}
 }

@@ -90,7 +90,6 @@ export class ArticleService {
 			return { articles: [], articlesCount: 0 };
 		}
 		const followingUserIds = follows.map((item) => item.followingId);
-		console.log(followingUserIds);
 
 		const queryBuilder = getRepository(ArticleEntity)
 			.createQueryBuilder("articles")
@@ -99,6 +98,15 @@ export class ArticleService {
 
 		queryBuilder.orderBy("articles.createdAt", "DESC");
 		const articlesCount = await queryBuilder.getCount();
+
+		if (query.limit) {
+			queryBuilder.limit(query.limit);
+		}
+
+		if (query.offset) {
+			queryBuilder.offset(query.offset);
+		}
+
 		const articles = await queryBuilder.getMany();
 		return { articles, articlesCount };
 	}
@@ -183,6 +191,6 @@ export class ArticleService {
 	}
 
 	private getSlug(title: string): string {
-		return slugify(title, { lower: true }) + "-" + ((Math.random() * Math.pow(36, 6)) | 0).toString(36);
+		return slugify(((Math.random() * Math.pow(36, 6)) | 0).toString(36));
 	}
 }

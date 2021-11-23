@@ -8,11 +8,13 @@ import { ArticleResponseInterface } from "./types/article.response.interface";
 import slugify from "slugify";
 import { AllArticlesResponseInterface } from "./types/allArticlesResponseInterface";
 import { User } from "src/user/decorators/user.decorator";
+import { FollowEntity } from "src/profile/follow.entity";
 @Injectable()
 export class ArticleService {
 	constructor(
 		@InjectRepository(ArticleEntity) private readonly articleRepository: Repository<ArticleEntity>,
 		@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
+		@InjectRepository(FollowEntity) private readonly followRepository: Repository<FollowEntity>,
 	) {}
 	async findAll(currentUserId: number, query: any): Promise<AllArticlesResponseInterface> {
 		const queryBuilder = getRepository(ArticleEntity)
@@ -71,15 +73,34 @@ export class ArticleService {
 			});
 			favoriteIds = currentUser.favorites.map((favorite) => favorite.id);
 		}
-
 		const articlesCount = await queryBuilder.getCount();
-
 		const articles = await queryBuilder.getMany();
 		const articlesWithFavorites = articles.map((article) => {
 			const favorited = favoriteIds.includes(article.id);
 			return { ...article, favorited };
 		});
 		return { articles: articlesWithFavorites, articlesCount };
+	}
+
+	async getFeed(currentUserId: number, query: any): Promise<AllArticlesResponseInterface> {
+		const follows = await this.followRepository.find({
+			followerId: currentUserId,
+		});
+		if (follows.length === 0) {
+			return { articles: [], articlesCount: 0 };
+		}
+		const followingUserIds = follows.map((item) => item.followingId);
+		console.log(followingUserIds);
+
+		const queryBuilder = getRepository(ArticleEntity)
+			.createQueryBuilder("articles")
+			.leftJoinAndSelect("articles.author", "author")
+			.where("articles.authorId in (:...ids)", { ids: followingUserIds });
+
+		queryBuilder.orderBy("articles.createdAt", "DESC");
+		const articlesCount = await queryBuilder.getCount();
+		const articles = await queryBuilder.getMany();
+		return { articles, articlesCount };
 	}
 
 	async createArticle(currentUser: UserEntity, createArticleDto: CreateArticleDto): Promise<ArticleEntity> {

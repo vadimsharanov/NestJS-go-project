@@ -15,6 +15,9 @@ export class UserService {
 	constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>) {}
 
 	async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
+		const errorResponse = {
+			errors: {},
+		};
 		const userByEmail = await this.userRepository.findOne({
 			email: createUserDto.email,
 		});
@@ -23,8 +26,16 @@ export class UserService {
 			username: createUserDto.username,
 		});
 
+		if (userByEmail) {
+			errorResponse.errors["email"] = "has already been taken";
+		}
+
+		if (userByUsername) {
+			errorResponse.errors["username"] = "has already been taken";
+		}
+
 		if (userByEmail || userByUsername) {
-			throw new HttpException("User is already registered", HttpStatus.UNPROCESSABLE_ENTITY);
+			throw new HttpException(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 
 		const newUser = new UserEntity();

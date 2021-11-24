@@ -1,4 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Post,
+	Put,
+	Query,
+	Req,
+	UseGuards,
+	UsePipes,
+	ValidationPipe,
+} from "@nestjs/common";
+import { BackendValidationPipe } from "src/shared/pipes/backendValidation.pipe";
 import { User } from "src/user/decorators/user.decorator";
 import { UserEntity } from "src/user/entity/user.entity";
 import { AuthGuard } from "src/user/guard/auth.guard";
@@ -24,6 +38,7 @@ export class ArticleController {
 	}
 
 	@Post()
+	@UsePipes(new BackendValidationPipe())
 	@UseGuards(AuthGuard)
 	async create(
 		@User() currentUser: UserEntity,

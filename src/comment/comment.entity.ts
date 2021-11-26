@@ -21,6 +21,6 @@ export class CommentEntity {
 		this.updatedAt = new Date();
 	}
 
-	@ManyToOne(() => UserEntity, (user) => user.comments)
+	@ManyToOne(() => UserEntity, (user) => user.comments, { eager: true })
 	author: UserEntity;
 }

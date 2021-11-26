@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { User } from "src/user/decorators/user.decorator";
 import { UserEntity } from "src/user/entity/user.entity";
 import { AuthGuard } from "src/user/guard/auth.guard";
@@ -12,13 +12,14 @@ export class CommentController {
 	async getComment() {
 		return "in the future there will be all comments list";
 	}
-	@Post("comments")
+	@Post("comment")
 	@UseGuards(AuthGuard)
 	async postComment(
 		@User() currentUser: UserEntity,
 		@Body("comment") createCommentDto: CreateCommentDto,
+		@Param("slug") slug: string,
 	): Promise<any> {
-		const comment = await this.commentService.postComment(createCommentDto, currentUser);
+		const comment = await this.commentService.postComment(createCommentDto, currentUser, slug);
 		return await this.commentService.buildArticleResponse(comment);
 	}
 }

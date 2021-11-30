@@ -22,6 +22,9 @@ export class CommentEntity {
 		this.updatedAt = new Date();
 	}
 
+	@Column({ default: "" })
+	slug: string;
+
 	@ManyToOne(() => UserEntity, (user) => user.comments, { eager: true })
 	author: UserEntity;
 

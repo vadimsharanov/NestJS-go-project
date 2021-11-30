@@ -9,8 +9,8 @@ import { CreateCommentDto } from "./dto/createComment.dto";
 export class CommentController {
 	constructor(private readonly commentService: CommentService) {}
 	@Get("comment")
-	async getComment() {
-		return "in the future there will be all comments list";
+	async getComment(@Param("slug") slug: string) {
+		return this.commentService.getComment(slug);
 	}
 	@Post("comment")
 	@UseGuards(AuthGuard)

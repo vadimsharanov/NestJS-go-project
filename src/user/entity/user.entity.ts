@@ -16,7 +16,9 @@ export class UserEntity {
 	@Column({ default: "" })
 	bio: string;
 
-	@Column({ default: "" })
+	@Column({
+		default: "https://www.nicepng.com/png/detail/433-4333111_emoji-smile-smiley-badge-round-face-fresh-comments.png",
+	})
 	image: string;
 
 	@Column({ select: false })

@@ -1,4 +1,5 @@
 import { timestamp } from "rxjs";
+import { ArticleEntity } from "src/article/article.entity";
 import { UserEntity } from "src/user/entity/user.entity";
 import { BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -23,4 +24,7 @@ export class CommentEntity {
 
 	@ManyToOne(() => UserEntity, (user) => user.comments, { eager: true })
 	author: UserEntity;
+
+	@ManyToOne(() => ArticleEntity, (articles) => articles.comment, { eager: true })
+	articles: ArticleEntity;
 }
